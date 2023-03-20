@@ -9,6 +9,7 @@ import ContactUs from './app/screens/ContactUs';
 import CustomDrawer from './app/screens/CustomDrawer';
 import ForgotPass from './app/screens/Forgotpass';
 import Home from './app/screens/Home';
+import LiveChat from './app/screens/LiveChat';
 import Login from './app/screens/Login';
 import Notifications from './app/screens/Notifications';
 import PersonalInfo from './app/screens/PersonalInfo';
@@ -125,6 +126,18 @@ const AuthenticatedStack = () => {
           },
           headerTitleAlign: 'center',
           drawerLabel: 'Contact Us',
+          drawerIcon: () => <Icon name="mail" color="#000000" size={25} />,
+        }}
+      />    
+      <Drawer.Screen
+        name="Live Chat"
+        component={LiveChat}
+        options={{
+          headerStyle: {
+            backgroundColor: '#a7e5b9',
+          },
+          headerTitleAlign: 'center',
+          drawerLabel: 'Live Chat',
           drawerIcon: () => <Icon name="mail" color="#000000" size={25} />,
         }}
       />    
