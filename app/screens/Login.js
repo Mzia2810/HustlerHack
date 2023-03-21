@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -12,12 +12,64 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-const Login = () => {
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../store/storeSlices/loginSlice';
+const Login = (props) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const [number, setNumber] = useState('');
+  const [password, setPassword] = useState('')
+  const [isLoggingIn, setIsloggingIn] = useState(false);
+  const [Errors, setErrors] = useState([])
+
+  const login = () => {
+    if (!number && !password) {
+      setErrors([
+        'number',
+        'password'
+      ])
+    } else if (!number) {
+      setErrors([
+        'number'
+      ])
+    } else if (!password) {
+      setErrors([
+        'password'
+      ])
+    } else {
+      setIsloggingIn(true)
+
+      navigation.replace('AuthenticatedStack')
+
+      //TODO
+      // dispatch(loginUser({
+      //   number,
+      //   password,
+      //   onSuccess: () => {
+      //     setIsloggingIn(false);
+      //     navigation.replace('Home')
+      //    },
+      //   onFailed: () => {
+      //     setIsloggingIn(false);
+      //   }
+      // }))
+    }
+  }
+
+  const removeKeyFromErrors = (key) => {
+    let isInArray = Errors?.includes(key);
+ 
+    if (isInArray) {
+      let RemainingErrors = Errors?.filter((error) => error != key);
+       
+      setErrors(RemainingErrors)
+    }
+  }
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
-      style={{flex: 1, justifyContent: 'center'}}>
+      style={{ flex: 1, justifyContent: 'center' }}>
       <ImageBackground
         resizeMode="cover"
         source={require('../assets/bg.png')}
@@ -30,7 +82,7 @@ const Login = () => {
           }}>
           <Image
             source={require('../assets/logo.png')}
-            style={{width: 278, height: 53, marginTop: 50, marginBottom: 50}}
+            style={{ width: 278, height: 53, marginTop: 50, marginBottom: 50 }}
           />
           <View style={styles.form}>
             <View style={styles.inputForm}>
@@ -39,15 +91,36 @@ const Login = () => {
                 style={styles.input}
                 placeholder="+255 (0) 7xxxxxxxx"
                 keyboardType="phone-pad"
+                value={number}
+                onChangeText={(text) => {
+                  if (text?.length > 0) {
+                    removeKeyFromErrors('number')
+                  }
+                  setNumber(text)
+                }}
+                maxLength={16}
               />
             </View>
+            {
+              Errors?.includes('number') && <Text style={{ color: '#ff2222' }}>Phone number is required.</Text>
+            }
             <View style={styles.inputForm}>
               <Text style={styles.inputLabel}>Password</Text>
-              <TextInput style={styles.input} placeholder="Input Password" />
+              <TextInput style={styles.input} placeholder="Input Password" value={password} onChangeText={(text) => {
+
+
+                if (text?.length > 0) {
+                  removeKeyFromErrors('password')
+                }
+                setPassword(text)
+              }} />
             </View>
+            {
+              Errors?.includes('password') && <Text style={{ color: '#ff2222' }}>Password is required.</Text>
+            }
             <View style={styles.formBtnContainer}>
               <View style={styles.formBtn}>
-                <TouchableNativeFeedback>
+                <TouchableNativeFeedback disabled={isLoggingIn} onPress={login}>
                   <Icon name="east" color="#fff" size={40} />
                 </TouchableNativeFeedback>
               </View>

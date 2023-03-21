@@ -17,16 +17,18 @@ import Profile from './app/screens/Profile';
 import Records from './app/screens/Records';
 import Signup from './app/screens/Signup';
 import WelcomeScreen from './app/screens/WelcomeScreen';
-
- const Stack = createNativeStackNavigator();
+import { Provider } from 'react-redux'
+import { store } from './app/store/configStore';
+const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 
 const App = () => {
-   
-    return (
-         <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+
+  return (
+    <Provider store={store}>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="ChangeLanguage" component={ChangeLanguage} />
         <Stack.Screen name="Login" component={Login} />
@@ -36,11 +38,12 @@ const App = () => {
         <Stack.Screen
           name="AuthenticatedStack"
           component={AuthenticatedStack}
-          options={{headerShown: false}}
-          />
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
-    );
+    </Provider>
+  );
 };
 
 const AuthenticatedStack = () => {
@@ -70,12 +73,12 @@ const AuthenticatedStack = () => {
           headerStyle: {
             backgroundColor: '#05F000',
           },
-         headerTitle: props => <LogoTitle {...props} />,
+          headerTitle: props => <LogoTitle {...props} />,
           headerTitleAlign: 'center',
           drawerIcon: () => <Icon name="house" color="#000000" size={25} />,
         }}
       />
-       <Drawer.Screen
+      <Drawer.Screen
         name="Profile"
         component={Profile}
         options={{
@@ -99,7 +102,7 @@ const AuthenticatedStack = () => {
           },
           headerTitle: "Submitted hustler fund loan extensions",
           headerTitleAlign: 'center',
-          
+
           drawerIcon: () => <Icon name="receipt-long" color="#000000" size={25} />,
         }}
       />
@@ -128,7 +131,7 @@ const AuthenticatedStack = () => {
           drawerLabel: 'Contact Us',
           drawerIcon: () => <Icon name="mail" color="#000000" size={25} />,
         }}
-      />    
+      />
       <Drawer.Screen
         name="Live Chat"
         component={LiveChat}
@@ -140,7 +143,7 @@ const AuthenticatedStack = () => {
           drawerLabel: 'Live Chat',
           drawerIcon: () => <Icon name="mail" color="#000000" size={25} />,
         }}
-      />    
+      />
     </Drawer.Navigator>
   );
 };
@@ -148,7 +151,7 @@ const AuthenticatedStack = () => {
 const LogoTitle = () => {
   return (
     <Image
-      style={{width: 267, height: 58, resizeMode: 'contain', marginTop: 70}}
+      style={{ width: 267, height: 58, resizeMode: 'contain', marginTop: 70 }}
       source={require('./app/assets/logo.png')}
     />
   );
