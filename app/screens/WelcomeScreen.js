@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const WelcomeScreen = ({navigation}) => {
   setTimeout(() => {
-    navigation.replace('ChangeLanguage');
+    navigation.replace('Premission');
   }, 5000);
 
   return (
