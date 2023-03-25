@@ -3,12 +3,6 @@ import { AxiosError } from "axios";
 import ApiInstance from "../../apis/AxiosInstance";
 import { PACKAGE, USER_PROFILE } from "../../apis/EndPoints";
 
-interface userAction {
-
-}
-
-
-
 const appStateSlice = createSlice({
     name: 'appState',
     initialState: {
@@ -22,9 +16,15 @@ const appStateSlice = createSlice({
             state.isAgreedTermsAgreed = action.payload
         },
         changePermissionState: (state, action) => {
+            console.log('====================================');
+            console.log('action.payload changePermissionState',action.payload);
+            console.log('====================================');
             state.isPermissionAgreed = action.payload
         },
         changePrivacyPolicyState: (state, action) => {
+            console.log('====================================');
+            console.log('action.payload changePrivacyPolicyState',action.payload);
+            console.log('====================================');
             state.isPrivacyPolicyAgreed = action.payload
         },
 

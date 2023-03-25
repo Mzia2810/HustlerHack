@@ -6,11 +6,13 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Modal
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import { useDispatch } from 'react-redux';
 import { changePrivacyPolicyState } from '../store/storeSlices/appStateSlicer';
 
 const data = [
@@ -57,11 +59,18 @@ const renderItem = ({ item }) => {
   );
 };
 
-const OnDisAgree = () => {
-  dispatch(changePrivacyPolicyState(false))
-  navigation.navigate('ChangeLanguage')
-}
 const Privacy = ({ navigation }) => {
+  const dispatch = useDispatch()
+  const [visible, setVisible] = useState(false);
+  const OnDisAgree = () => {
+    dispatch(changePrivacyPolicyState(false))
+    navigation.navigate('ChangeLanguage')
+  }
+  const onCofirm = () => {
+    setVisible(false)
+    dispatch(changePrivacyPolicyState(true))
+    navigation.navigate('ChangeLanguage')
+  }
   return (
     <View style={{ flex: 1 }}>
       <View style={{ width: wp('40%'), alignSelf: 'center', marginTop: 10 }}>
@@ -82,11 +91,54 @@ const Privacy = ({ navigation }) => {
           <Text style={styles.btntext}>I Disagree</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ChangeLanguage')}
+          onPress={() => setVisible(true)}
           style={styles.btn2}>
           <Text style={[styles.btntext, { color: 'white' }]}>I Agree</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        transparent
+        visible={visible}
+        onRequestClose={() => setVisible(false)}>
+        <TouchableOpacity style={{ flex: 1 }} onPress={() => setVisible(false)}>
+          <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', flex: 1 }} />
+        </TouchableOpacity>
+        <View style={styles.modalView}>
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '600',
+              lineHeight: 18,
+              color: 'black',
+            }}>
+            Notice
+          </Text>
+          <View>
+            <Text style={{ textAlign: 'center', marginTop: 20 }}>
+              In order to evaluate your qualifications and provide you with
+              better services, we need your authorization to collect your
+              relevant information. Please confirm whether to deny the
+              permission and understand that this operation will exit the APP,
+              or cancel the operation?{' '}
+            </Text>
+          </View>
+
+          <View style={styles.bntParentModal}>
+            <TouchableOpacity
+              onPress={() => setVisible(false)}
+              style={styles.btn1Modal}>
+              <Text style={styles.btntext}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onCofirm}
+              style={styles.btn2Modal}>
+              <Text style={[styles.btntext, { color: 'white' }]}>Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 };
@@ -94,6 +146,45 @@ const Privacy = ({ navigation }) => {
 export default Privacy;
 
 const styles = StyleSheet.create({
+  modalView: {
+    backgroundColor: '#fff',
+    padding: 20,
+    position: 'absolute',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignItems: 'center',
+    width: wp('80%'),
+    marginTop: hp('20%'),
+    borderRadius: 10,
+  },
+  btn1Modal: {
+    borderWidth: 2,
+    borderColor: '#5ECE7D',
+    // paddingHorizontal: 18,
+    // paddingVertical: 6,
+    width: wp('30%'),
+    height: hp('5%'),
+    borderRadius: 8,
+    justifyContent: 'center',
+  },
+  btn2Modal: {
+    width: wp('30%'),
+    height: hp('5%'),
+    borderWidth: 2,
+    borderColor: '#5ECE7D',
+    backgroundColor: '#5ECE7D',
+    // paddingHorizontal: 18,
+    // paddingVertical: 6,
+    borderRadius: 5,
+    justifyContent: 'center',
+  },
+  bntParentModal: {
+    width: wp('70%'),
+    alignSelf: 'center',
+    marginTop: hp('10%'),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   Privacy: {
     fontSize: 20,
     fontWeight: '700',

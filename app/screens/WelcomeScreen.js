@@ -6,12 +6,33 @@ import { StoreState } from '../store/configStore'
 const WelcomeScreen = ({ navigation }) => {
 
   const state = useSelector(state => state.login)
+  const appState = useSelector(state => state.appState) || {}
 
 
 
   React.useEffect(() => {
+    const {
+      isPermissionAgreed ,
+      isPrivacyPolicyAgreed 
+    } = appState || {}
     !!state?.token ? navigation.replace('AuthenticatedStack') : setTimeout(() => {
-      navigation.replace('Premission');
+      console.log('====================================');
+      console.log('isPermissionAgreed && !!isPrivacyPolicyAgreed',
+        isPermissionAgreed,
+        isPrivacyPolicyAgreed,
+        appState
+      );
+      console.log('====================================');
+      if (!!isPermissionAgreed && !!isPrivacyPolicyAgreed) {
+        navigation.replace('ChangeLanguage');
+      } else if (!isPermissionAgreed) {
+        navigation.replace('Premission');
+      } else if (!isPrivacyPolicyAgreed) {
+        navigation.replace('Privacy');
+      } else {
+        navigation.replace('Premission');
+      }
+
     }, 2500);
   }, [])
 

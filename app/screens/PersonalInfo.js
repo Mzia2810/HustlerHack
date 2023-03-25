@@ -36,9 +36,7 @@ const PersonalInfo = () => {
   })
   const onNext = () => {
     const { cnic, country, dob, email, first_name, gender, last_name, } = states
-    console.log('====================================');
-    console.log('states', states);
-    console.log('====================================');
+
     if (!cnic || !country || !dob || !email || !first_name || !gender || !last_name) {
       Alert.alert('One of the required field is missing.');
       return
