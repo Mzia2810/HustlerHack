@@ -131,6 +131,21 @@ export const loginSlice = createSlice({
         },
         updateSignupForm: (state, action) => {
             state.userData = { ...state.userData, ...action.payload }
+        },
+        clearForm: (state, action) => {
+            state.userData = {
+                first_name: '',
+                last_name: '',
+                email: '',
+                dob: '',
+                gender: '',
+                password: '',
+                cnic: '',
+                address: '',
+                country: '',
+                phone: '',
+                otp: '',
+            }
         }
     },
     extraReducers: (builder) => {
@@ -213,6 +228,6 @@ export const loginSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { clearToken, updateSignupForm } = loginSlice.actions
+export const { clearToken, updateSignupForm ,clearForm} = loginSlice.actions
 
 export default loginSlice.reducer

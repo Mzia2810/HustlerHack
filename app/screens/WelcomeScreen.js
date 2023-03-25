@@ -10,11 +10,8 @@ const WelcomeScreen = ({ navigation }) => {
 
 
   React.useEffect(() => {
-    console.log('====================================');
-    console.log('state',state?.token);
-    console.log('====================================');
     !!state?.token ? navigation.replace('AuthenticatedStack') : setTimeout(() => {
-      navigation.replace('ChangeLanguage');
+      navigation.replace('Premission');
     }, 2500);
   }, [])
 

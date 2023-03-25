@@ -17,6 +17,10 @@ import Profile from './app/screens/Profile';
 import Records from './app/screens/Records';
 import Signup from './app/screens/Signup';
 import WelcomeScreen from './app/screens/WelcomeScreen';
+import Premission from './app/screens/Premission';
+import Privacy from './app/screens/Privacy';
+
+
 import { Provider } from 'react-redux'
 import { store, persistor } from './app/store/configStore';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -30,23 +34,24 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
-          <Stack.Screen name="ChangeLanguage" component={ChangeLanguage} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Signup" component={Signup} />
-          <Stack.Screen name="ForgotPass" component={ForgotPass} />
-          <Stack.Screen name="PersonalInfo" component={PersonalInfo} />
-          <Stack.Screen
-            name="AuthenticatedStack"
-            component={AuthenticatedStack}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-      </PersistGate>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Premission" component={Premission} />
+        <Stack.Screen name="Privacy" component={Privacy} />
+
+        <Stack.Screen name="ChangeLanguage" component={ChangeLanguage} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="ForgotPass" component={ForgotPass} />
+        <Stack.Screen name="PersonalInfo" component={PersonalInfo} />
+        <Stack.Screen
+          name="AuthenticatedStack"
+          component={AuthenticatedStack}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
     </Provider>
   );
 };
