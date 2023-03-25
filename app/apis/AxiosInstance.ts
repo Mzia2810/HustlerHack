@@ -5,7 +5,7 @@ import { store } from "../store/configStore";
 
 
 const ApiInstance = axios.create({
-    baseURL: 'http://192.168.43.235:8000/api/',
+    baseURL: 'https://api.hustlerfundhack.com/public/api/',
     timeout: 5000,
     headers: {
         'Accept': 'Application/json'
