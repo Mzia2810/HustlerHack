@@ -12,9 +12,21 @@ interface userAction {
 const appStateSlice = createSlice({
     name: 'appState',
     initialState: {
-        isAgreedTerms: false,
+        isAgreedTermsAgreed: false,
+        isPermissionAgreed: false,
+        isPrivacyPolicyAgreed: false,
     },
     reducers: {
+
+        changeTermsState: (state, action) => {
+            state.isAgreedTermsAgreed = action.payload
+        },
+        changePermissionState: (state, action) => {
+            state.isPermissionAgreed = action.payload
+        },
+        changePrivacyPolicyState: (state, action) => {
+            state.isPrivacyPolicyAgreed = action.payload
+        },
 
     },
     extraReducers(builder) {
@@ -22,5 +34,9 @@ const appStateSlice = createSlice({
     }
 })
 
-export const { } = appStateSlice.actions
+export const {
+    changeTermsState,
+    changePermissionState,
+    changePrivacyPolicyState,
+} = appStateSlice.actions
 export default appStateSlice.reducer

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   FlatList,
   Text,
@@ -11,6 +11,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import { changePrivacyPolicyState } from '../store/storeSlices/appStateSlicer';
 
 const data = [
   {
@@ -47,23 +48,27 @@ const data = [
   },
 ];
 
-const renderItem = ({item}) => {
+const renderItem = ({ item }) => {
   return (
     <View>
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={{textAlign: 'justify'}}>{item.desc}</Text>
+      <Text style={{ textAlign: 'justify' }}>{item.desc}</Text>
     </View>
   );
 };
 
-const Privacy = ({navigation}) => {
+const OnDisAgree = () => {
+  dispatch(changePrivacyPolicyState(false))
+  navigation.navigate('ChangeLanguage')
+}
+const Privacy = ({ navigation }) => {
   return (
-    <View style={{flex: 1}}>
-      <View style={{width: wp('40%'), alignSelf: 'center', marginTop: 10}}>
+    <View style={{ flex: 1 }}>
+      <View style={{ width: wp('40%'), alignSelf: 'center', marginTop: 10 }}>
         <Image source={require('../assets/PLogo.png')} />
       </View>
 
-      <View style={{width: wp('90%'), height: hp('83%'), alignSelf: 'center'}}>
+      <View style={{ width: wp('90%'), height: hp('83%'), alignSelf: 'center' }}>
         <Text style={styles.Privacy}>Privacy policies</Text>
         <FlatList
           style
@@ -73,13 +78,13 @@ const Privacy = ({navigation}) => {
         />
       </View>
       <View style={styles.btnParent}>
-        <TouchableOpacity style={styles.btn1}>
+        <TouchableOpacity onPress={OnDisAgree} style={styles.btn1}>
           <Text style={styles.btntext}>I Disagree</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate('ChangeLanguage')}
           style={styles.btn2}>
-          <Text style={[styles.btntext, {color: 'white'}]}>I Agree</Text>
+          <Text style={[styles.btntext, { color: 'white' }]}>I Agree</Text>
         </TouchableOpacity>
       </View>
     </View>

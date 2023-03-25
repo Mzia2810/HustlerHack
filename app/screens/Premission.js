@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
   FlatList,
   Text,
@@ -12,6 +12,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import { useDispatch } from 'react-redux';
+import { changePermissionState } from '../store/storeSlices/appStateSlicer';
 
 const data = [
   {
@@ -216,27 +218,32 @@ All warranties and obligations implied by law are hereby excluded to the fullest
   },
 ];
 
-const renderItem = ({item}) => {
+const renderItem = ({ item }) => {
   return (
     <View>
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={{textAlign: 'justify'}}>{item.desc}</Text>
+      <Text style={{ textAlign: 'justify' }}>{item.desc}</Text>
     </View>
   );
 };
 
-const Premission = ({navigation}) => {
-  console.log(navigation);
+const Premission = ({ navigation }) => {
 
-  // const navigation = useNavigation();
+  const dispatch = useDispatch()
+
+
+  const OnDisAgree = () => {
+    dispatch(changePermissionState(false))
+    navigation.navigate('Privacy')
+  }
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{width: wp('40%'), alignSelf: 'center', marginTop: 10}}>
+    <View style={{ flex: 1 }}>
+      <View style={{ width: wp('40%'), alignSelf: 'center', marginTop: 10 }}>
         <Image source={require('../assets/PLogo.png')} />
         <Text style={styles.Premission}>Permissions Disclosure</Text>
       </View>
-      <View style={{width: wp('90%'), height: hp('76%'), alignSelf: 'center'}}>
+      <View style={{ width: wp('90%'), height: hp('76%'), alignSelf: 'center' }}>
         <FlatList
           style
           data={data}
@@ -245,13 +252,13 @@ const Premission = ({navigation}) => {
         />
       </View>
       <View style={styles.bntParent}>
-        <TouchableOpacity style={styles.btn1}>
+        <TouchableOpacity onPress={OnDisAgree} style={styles.btn1}>
           <Text style={styles.btntext}>I Disagree</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate('Privacy')}
           style={styles.btn2}>
-          <Text style={[styles.btntext, {color: 'white'}]}>I Agree</Text>
+          <Text style={[styles.btntext, { color: 'white' }]}>I Agree</Text>
         </TouchableOpacity>
       </View>
     </View>
