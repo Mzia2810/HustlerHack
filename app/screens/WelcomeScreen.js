@@ -1,16 +1,45 @@
 import React from 'react';
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../store/configStore'
+const WelcomeScreen = ({ navigation }) => {
 
-const WelcomeScreen = ({navigation}) => {
-  setTimeout(() => {
-    navigation.replace('ChangeLanguage');
-  }, 5000);
+  const state = useSelector(state => state.login)
+  const appState = useSelector(state => state.appState) || {}
+
+
+
+  React.useEffect(() => {
+    const {
+      isPermissionAgreed ,
+      isPrivacyPolicyAgreed 
+    } = appState || {}
+    !!state?.token ? navigation.replace('AuthenticatedStack') : setTimeout(() => {
+      console.log('====================================');
+      console.log('isPermissionAgreed && !!isPrivacyPolicyAgreed',
+        isPermissionAgreed,
+        isPrivacyPolicyAgreed,
+        appState
+      );
+      console.log('====================================');
+      if (!!isPermissionAgreed && !!isPrivacyPolicyAgreed) {
+        navigation.replace('ChangeLanguage');
+      } else if (!isPermissionAgreed) {
+        navigation.replace('Premission');
+      } else if (!isPrivacyPolicyAgreed) {
+        navigation.replace('Privacy');
+      } else {
+        navigation.replace('Premission');
+      }
+
+    }, 2500);
+  }, [])
 
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
-      style={{flex: 1, justifyContent: 'center'}}>
+      style={{ flex: 1, justifyContent: 'center' }}>
       <ImageBackground
         resizeMode="cover"
         source={require('../assets/bg.png')}
@@ -23,7 +52,7 @@ const WelcomeScreen = ({navigation}) => {
           }}>
           <Image
             source={require('../assets/logo.png')}
-            style={{width: 278, height: 53}}
+            style={{ width: 278, height: 53 }}
           />
           <Text
             style={{

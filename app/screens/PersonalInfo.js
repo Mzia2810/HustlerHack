@@ -1,23 +1,84 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
-    Image,
-    ImageBackground,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableNativeFeedback,
-    View,
+  Image,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableNativeFeedback,
+  View,
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearForm, registerUser, updateSignupForm } from '../store/storeSlices/loginSlice';
 
 const PersonalInfo = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch()
+  const { userData } = useSelector(state => state.login)
+
+  const [isLoading, setisLoading] = useState(false);
+  const [states, setStates] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    dob: '',
+    gender: '',
+
+    cnic: '',
+    address: '',
+    country: '',
+
+  })
+  const onNext = () => {
+    const { cnic, country, dob, email, first_name, gender, last_name, } = states
+
+    if (!cnic || !country || !dob || !email || !first_name || !gender || !last_name) {
+      Alert.alert('One of the required field is missing.');
+      return
+    }
+    setisLoading(true)
+    dispatch(updateSignupForm({
+      ...states,
+      address: country
+    }))
+    setTimeout(async () => {
+      let response = await dispatch(registerUser())
+      if (response?.status >= 200 && response?.status < 300) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [
+              {
+                name: 'AuthenticatedStack',
+
+              },
+            ],
+          })
+        );
+        dispatch(clearForm())
+
+      } else {
+        setisLoading(false)
+      }
+
+    }, 2000);
+  }
+
+  React.useEffect(() => {
+    return () => {
+      setisLoading(false)
+    }
+  }, [])
+
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
-      style={{flex: 1, justifyContent: 'center'}}>
+      style={{ flex: 1, justifyContent: 'center' }}>
       <ImageBackground
         resizeMode="cover"
         source={require('../assets/bg.png')}
@@ -31,7 +92,7 @@ const PersonalInfo = () => {
             }}>
             <Image
               source={require('../assets/logo.png')}
-              style={{width: 278, height: 53, marginTop: 50, marginBottom: 10}}
+              style={{ width: 278, height: 53, marginTop: 50, marginBottom: 10 }}
             />
             <View style={styles.form}>
               <View style={styles.inputForm}>
@@ -39,41 +100,98 @@ const PersonalInfo = () => {
                 <TextInput
                   style={styles.input}
                   placeholder="Enter first name"
+                  value={states.first_name}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      first_name: text
+                    })
+                  }}
                 />
               </View>
               <View style={styles.inputForm}>
-                <Text style={styles.inputLabel}>First name</Text>
-                <TextInput style={styles.input} placeholder="Enter email" />
+                <Text style={styles.inputLabel}>Last name</Text>
+                <TextInput style={styles.input} placeholder="Enter last name"
+                  value={states.last_name}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      last_name: text
+                    })
+                  }} />
               </View>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Email</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Enter first name"
+                  placeholder="Enter Email"
+                  value={states.email}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      email: text
+                    })
+                  }}
                 />
               </View>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Gender</Text>
-                <TextInput style={styles.input} placeholder="Male" />
+                <TextInput style={styles.input} placeholder="Male"
+                  value={states.gender}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      gender: text
+                    })
+                  }}
+                />
               </View>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Date of Birth</Text>
-                <TextInput style={styles.input} placeholder="15/11/2021" />
+                <TextInput style={styles.input} placeholder="15/11/2021"
+                  value={states.dob}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      dob: text
+                    })
+                  }}
+                />
               </View>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>County of residence</Text>
-                <TextInput style={styles.input} placeholder="Enter Location" />
+                <TextInput style={styles.input} placeholder="Enter Location"
+                  value={states.country}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      country: text
+                    })
+                  }}
+                />
               </View>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Enter ID Number</Text>
-                <TextInput style={styles.input} placeholder="Enter ID No" />
+                <TextInput style={styles.input} placeholder="Enter ID No"
+                  value={states.cnic}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      cnic: text
+                    })
+                  }}
+                />
               </View>
 
               <View style={styles.formBtnContainer}>
                 <TouchableNativeFeedback
-                  onPress={() => navigation.navigate('AuthenticatedStack')}>
+                  disabled={isLoading}
+                  onPress={onNext}>
                   <View style={styles.formBtn}>
-                    <Text style={styles.btnText}>NEXT</Text>
+                    {
+                      isLoading ? <ActivityIndicator size={'small'} /> :
+                        <Text style={styles.btnText}>NEXT</Text>
+                    }
                   </View>
                 </TouchableNativeFeedback>
               </View>

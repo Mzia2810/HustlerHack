@@ -2,7 +2,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, LogBox } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ChangeLanguage from './app/screens/ChangeLanguage';
 import ContactUs from './app/screens/ContactUs';
@@ -17,12 +17,19 @@ import Profile from './app/screens/Profile';
 import Records from './app/screens/Records';
 import Signup from './app/screens/Signup';
 import WelcomeScreen from './app/screens/WelcomeScreen';
+import Premission from './app/screens/Premission';
+import Privacy from './app/screens/Privacy';
+
+
 import { Provider } from 'react-redux'
-import { store } from './app/store/configStore';
+import { store, persistor } from './app/store/configStore';
+import { PersistGate } from 'redux-persist/integration/react';
+
+
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-
+LogBox.ignoreAllLogs(true)
 const App = () => {
 
   return (
@@ -30,6 +37,9 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Premission" component={Premission} />
+        <Stack.Screen name="Privacy" component={Privacy} />
+
         <Stack.Screen name="ChangeLanguage" component={ChangeLanguage} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
@@ -144,6 +154,9 @@ const AuthenticatedStack = () => {
           drawerIcon: () => <Icon name="mail" color="#000000" size={25} />,
         }}
       />
+      
+    
+   
     </Drawer.Navigator>
   );
 };

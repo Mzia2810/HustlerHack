@@ -1,16 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   ImageBackground,
   ScrollView,
   StyleSheet,
   Text,
   TouchableNativeFeedback,
+  TouchableOpacity,
   View,
+  RefreshControl
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserData } from '../store/storeSlices/userSlicer';
 import GetMoneyModal from './GetMoneyModal';
-
+import { userInitialStates } from '../store/storeSlices/userSlicer'
+import { StoreState } from '../store/configStore';
+import { getPackages, IPackage } from '../store/storeSlices/packagesSlice';
 const Home = () => {
+  const dispatch = useDispatch();
+  const user = useSelector<StoreState, userInitialStates>(state => state.user)
+  const { packages } = useSelector<StoreState, any>(state => state.packages) || {}
+
+  const [isfetchingData, setfechtingData] = useState(false);
+  const [refreshing, setrefreshing] = useState(false);
+  const [packagesData, setPackagesData] = useState<Array<IPackage>>([])
+
   const data = [
     {
       id: 1,
@@ -28,14 +43,41 @@ const Home = () => {
       dollar: '15,000',
     },
   ];
+
+  const onRefesh = () => {
+    setrefreshing(true)
+    dispatch(getPackages())
+    setTimeout(() => {
+      setrefreshing(false)
+    }, 3000);
+
+  }
+
+  const fetchDashboardData = async () => {
+    dispatch(getUserData())
+    dispatch(getPackages())
+    setfechtingData(false)
+  }
+
+  React.useEffect(() => {
+    setfechtingData(true)
+    setTimeout(() => {
+      fetchDashboardData()
+    }, 3000);
+  }, [])
+  React.useEffect(() => {
+    setPackagesData(packages?.data || []);
+  }, [packages])
+
+
   return (
-    <ScrollView>
+    <View style={{ flex: 1 }}>
       <ImageBackground
         source={require('../assets/Vector1.png')}
         resizeMode="cover"
         style={styles.image}>
         <View style={styles.header}>
-          <Text style={styles.title}>Welcome {`first name`}</Text>
+          <Text style={[styles.title, { textTransform: 'capitalize' }]}>Welcome {`${user.user?.first_name}` || ''}</Text>
         </View>
       </ImageBackground>
       <View style={styles.mainContainer}>
@@ -55,23 +97,62 @@ const Home = () => {
           </View>
         </View>
         <Text style={styles.limit}>Current Existing Loan Limit extensions</Text>
-        <View style={styles.loanAmounts}>
-          {data.map((item, index) => (
-            <TouchableNativeFeedback>
-              <View key={item.id}>
-                {item.text}
-                <View style={styles.singleLoanAmount}>
-                  <Text style={styles.singleLoanAmountText}>Amount</Text>
-                  <Text style={styles.loanAmountQuantity}>
-                    Ksh{' '}
-                    <Text style={styles.loanAmountQuantityDollar}>
-                      {item.dollar}
-                    </Text>
-                  </Text>
-                </View>
-              </View>
-            </TouchableNativeFeedback>
-          ))}
+        <View style={{ marginTop: 20 }}>
+          {
+            isfetchingData ? <ActivityIndicator size={'large'} /> :
+
+              <ScrollView
+                refreshControl={<RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefesh}
+                />}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                  alignItems: 'center'
+                }}
+              >
+
+
+                {packagesData && packagesData?.map((item, index) => (
+                  <TouchableOpacity key={index} style={{
+                    height: index == 0 ? 170 : 140,
+                    width: index == 0 ? 135 : 120,
+
+                    borderColor: 'red',
+                    overflow: 'hidden',
+                    alignItems: 'center',
+                    flex: 1,
+                    marginHorizontal: 8
+                  }}>
+                    <View style={{ flex: 1, width: '100%', }} key={item.id}>
+                      <Text style={{
+                        color: item?.status == '1' ? 'green' : 'red',
+                        textAlign: 'center',
+                        paddingBottom: 8,
+                        fontWeight: '600',
+                        fontSize: 17
+                      }}>  {`${item?.status == '1' ? 'Available' : 'Unavailable'}`}</Text>
+                      <View style={styles.singleLoanAmount}>
+                        <Text style={styles.singleLoanAmountText}>Amount</Text>
+                        <Text style={styles.loanAmountQuantity}>
+                          Ksh{' '}
+                          <Text style={styles.loanAmountQuantityDollar}>
+                            {`${item?.price}`}
+                          </Text>
+                        </Text>
+                        <Text style={[styles.loanAmountQuantity, { paddingTop: 15 }]}>
+                          repayment time extended to
+                        </Text>
+                        <Text style={[styles.loanAmountQuantityDollar, { paddingTop: 4 }]}>
+                          {`${item?.package_days}`} days
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+          }
         </View>
 
         <View style={styles.hustlerFund}>
@@ -92,7 +173,7 @@ const Home = () => {
         <Text
           style={{
             textAlign: 'center',
-            fontWeight: 400,
+            fontWeight: '400',
             fontSize: 14,
             lineHeight: 17,
             color: '#008325',
@@ -101,7 +182,7 @@ const Home = () => {
           Powered by hustlerfundhack.co.ke
         </Text>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -112,14 +193,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 30,
     paddingBottom: 30,
+
+  },
+  image: {
+    // height: 100,
+    // width: '100%',
+    // borderRadius: 50,
+
+
   },
   title: {
-    fontWeight: 400,
-    fontSize: 14,
+    fontWeight: '400',
+    fontSize: 22,
     lineHeight: 17,
     color: '#FFFFFF',
     marginTop: 40,
     paddingBottom: 40,
+
   },
   mainContainer: {
     paddingHorizontal: 17,
@@ -144,20 +234,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   biddingText: {
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 11,
     lineHeight: 13,
     color: '#3467FF',
   },
   scoreText: {
-    fontWeight: 600,
+    fontWeight: '600',
     fontSize: 14,
     lineHeight: 15,
     color: '#000000',
     paddingTop: 30,
   },
   scoreRate: {
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 40,
     lineHeight: 13,
     color: 'red',
@@ -169,7 +259,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   limit: {
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 14,
     lineHeight: 15,
     color: '#000000',
@@ -185,7 +275,7 @@ const styles = StyleSheet.create({
   loanAmountTextGreen: {
     marginBottom: 5,
     color: '#32C35B',
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 11,
     lineHeight: 13,
     textAlign: 'center',
@@ -193,7 +283,7 @@ const styles = StyleSheet.create({
   loanAmountTextRed: {
     marginBottom: 5,
     color: 'red',
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 11,
     lineHeight: 13,
     textAlign: 'center',
@@ -206,7 +296,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     textAlign: 'center',
-    width: 114,
+    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   singleLoanAmountText: {
     textAlign: 'center',
@@ -214,14 +307,14 @@ const styles = StyleSheet.create({
   },
   loanAmountQuantity: {
     textAlign: 'center',
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 11,
     lineHeight: 13,
     color: '#000000',
     paddingTop: 8,
   },
   loanAmountQuantityDollar: {
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 16,
     lineHeight: 13,
     color: '#3467FF',
@@ -237,7 +330,7 @@ const styles = StyleSheet.create({
   },
   hustlerFundText: {
     textAlign: 'center',
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 10,
     lineHeight: 12,
     color: '#008325',

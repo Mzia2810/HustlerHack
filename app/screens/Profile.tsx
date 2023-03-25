@@ -1,14 +1,39 @@
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { useDispatch, useSelector } from 'react-redux';
+import { StoreState } from '../store/configStore';
+import { clearToken } from '../store/storeSlices/loginSlice';
+import { userInitialStates } from '../store/storeSlices/userSlicer';
 
 const Profile = () => {
+  const navigation = useNavigation()
+  const dispatch = useDispatch();
+
+  const user = useSelector<StoreState, userInitialStates>(state => state.user)
+
+  const logout = () => {
+    dispatch(clearToken())
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [
+          {
+            name: 'Login',
+
+          },
+        ],
+      })
+    )
+
+  }
   return (
     <View style={styles.container}>
       <View style={styles.image}>
         <Image
           resizeMode="contain"
-          style={{width: 202, height: 39, textAlign: 'center',marginTop: 50 }}
+          style={{ width: 202, height: 39, marginTop: 50 }}
           source={require('../assets/logo.png')}
         />
       </View>
@@ -24,35 +49,43 @@ const Profile = () => {
           <Text style={styles.profileInfoTitle}>Take photo</Text>
         </View>
         <View>
-          <Text style={styles.profileInfoText}>kieran munyi</Text>
+          <Text style={[styles.profileInfoText, { textTransform: 'capitalize' }]}>{user?.user?.first_name + ' ' + user?.user?.last_name}</Text>
           <Text style={styles.profileInfoText}>
-            255787898789 <Icon name="edit" size={18} color="#000000" />
+            {user?.user?.phone} <Icon name="edit" size={18} color="#000000" />
           </Text>
-          <Text style={styles.profileInfoText}>many@gmail.com</Text>
-          <Text style={styles.profileInfoText}>male</Text>
-          <Text style={styles.profileInfoText}>18/11/2021</Text>
-          <Text style={styles.profileInfoText}>Kilimanjaro</Text>
-          <Text style={styles.profileInfoText}>Kilimanjaro</Text>
+          <Text style={styles.profileInfoText}>{user?.user?.email || '---'}</Text>
+          <Text style={styles.profileInfoText}>{user?.user?.gender || ""}</Text>
+          <Text style={styles.profileInfoText}>{user?.user?.dob}</Text>
+          <Text style={styles.profileInfoText}>{user?.user?.country}</Text>
+          <Text style={styles.profileInfoText}>{user?.user?.cnic}</Text>
           <Text style={[styles.profileInfoText, styles.addBtn]}>add</Text>
         </View>
       </View>
-      <TouchableNativeFeedback onPress={() => navigation.navigate('Forgotpass')}>
+      <TouchableNativeFeedback onPress={() => navigation.navigate('ForgotPass')}>
         <View style={styles.resetPassContainer}>
           <Text style={styles.resetPass}>Reset Password</Text>
           <Icon name="lock" size={22} color="#000000" />
         </View>
       </TouchableNativeFeedback>
+
+
+      <TouchableNativeFeedback onPress={logout}>
+        <View style={styles.resetPassContainer}>
+          <Text style={[styles.resetPass, { color: 'red' }]}>Loggout?</Text>
+          {/* <Icon name="lock" size={22} color="#000000" /> */}
+        </View>
+      </TouchableNativeFeedback>
       <Text
-          style={{
-            textAlign: 'center',
-            fontWeight: 400,
-            fontSize: 14,
-            lineHeight: 17,
-            color: '#008325',
-            marginTop: 80,
-          }}>
-          Powered by hustlerfundhack.co.ke
-        </Text>
+        style={{
+          textAlign: 'center',
+          fontWeight: '400',
+          fontSize: 14,
+          lineHeight: 17,
+          color: '#008325',
+          marginTop: 80,
+        }}>
+        Powered by hustlerfundhack.co.ke
+      </Text>
     </View>
   )
 }
@@ -74,14 +107,14 @@ const styles = StyleSheet.create({
   },
   profileInfoTitle: {
     fontSize: 18,
-    fontWeight: 700,
+    fontWeight: '700',
     lineHeight: 22,
     color: '#000000',
     marginBottom: 15,
   },
   profileInfoText: {
     fontSize: 18,
-    fontWeight: 500,
+    fontWeight: '500',
     lineHeight: 22,
     color: '#000000',
     marginBottom: 15,
@@ -97,7 +130,7 @@ const styles = StyleSheet.create({
   },
   resetPass: {
     fontSize: 18,
-    fontWeight: 700,
+    fontWeight: '700',
     lineHeight: 22,
     color: '#14FA47',
     marginRight: 6,

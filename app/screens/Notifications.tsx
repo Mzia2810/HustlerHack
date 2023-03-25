@@ -1,8 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useDispatch, useSelector } from 'react-redux';
+import { StoreState } from '../store/configStore';
 
 const Notifications = () => {
+  const dispatch = useDispatch();
+  const { notifications } = useSelector<StoreState, any>(state => state.notifications)
   const data = [
     {
       id: 1,
@@ -34,9 +38,9 @@ const Notifications = () => {
           color="#000000"
         />
       </View>
-      <View style={{marginTop: 30}}>
-        {data.map(item => (
-          <View key={item.id} style={{marginBottom: 20}}>
+      <View style={{ marginTop: 30 }}>
+        {!!notifications && notifications?.map(item => (
+          <View key={item.id} style={{ marginBottom: 20 }}>
             <View style={styles.cardTextMain}>
               <Text style={styles.cardText}>{item.text}</Text>
             </View>
@@ -50,7 +54,7 @@ const Notifications = () => {
       <Text
         style={{
           textAlign: 'center',
-          fontWeight: 400,
+          fontWeight: '400',
           fontSize: 14,
           lineHeight: 17,
           color: '#008325',

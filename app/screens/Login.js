@@ -1,6 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Image,
   ImageBackground,
   StyleSheet,
@@ -12,10 +13,11 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../store/storeSlices/loginSlice';
 const Login = (props) => {
   const navigation = useNavigation();
+  const state = useSelector(state => state.login)
   const dispatch = useDispatch();
 
   const [number, setNumber] = useState('');
@@ -23,7 +25,9 @@ const Login = (props) => {
   const [isLoggingIn, setIsloggingIn] = useState(false);
   const [Errors, setErrors] = useState([])
 
-  const login = () => {
+  console.log('state.token', state?.token);
+  console.log('state.token', state.user);
+  const login = async () => {
     if (!number && !password) {
       setErrors([
         'number',
@@ -39,33 +43,44 @@ const Login = (props) => {
       ])
     } else {
       setIsloggingIn(true)
+      dispatch(loginUser({
+        number,
+        password,
+        onSuccess: () => {
+          setIsloggingIn(false);
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 1,
+              routes: [
+                {
+                  name: 'AuthenticatedStack',
 
-      navigation.replace('AuthenticatedStack')
-
-      //TODO
-      // dispatch(loginUser({
-      //   number,
-      //   password,
-      //   onSuccess: () => {
-      //     setIsloggingIn(false);
-      //     navigation.replace('Home')
-      //    },
-      //   onFailed: () => {
-      //     setIsloggingIn(false);
-      //   }
-      // }))
+                },
+              ],
+            })
+          );
+        },
+        onFailed: () => {
+          setIsloggingIn(false);
+        }
+      }))
     }
   }
 
   const removeKeyFromErrors = (key) => {
     let isInArray = Errors?.includes(key);
- 
+
     if (isInArray) {
       let RemainingErrors = Errors?.filter((error) => error != key);
-       
+
       setErrors(RemainingErrors)
     }
   }
+  React.useEffect(() => {
+    return () => {
+      setIsloggingIn(false)
+    }
+  }, [])
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
@@ -120,8 +135,8 @@ const Login = (props) => {
             }
             <View style={styles.formBtnContainer}>
               <View style={styles.formBtn}>
-                <TouchableNativeFeedback disabled={isLoggingIn} onPress={login}>
-                  <Icon name="east" color="#fff" size={40} />
+                <TouchableNativeFeedback style={{ justifyContent: 'center', alignItems: 'center' }} disabled={isLoggingIn} onPress={login}>
+                  {isLoggingIn ? <ActivityIndicator size={'small'} color={'#fff'} /> : <Icon name="east" color="#fff" size={40} />}
                 </TouchableNativeFeedback>
               </View>
             </View>
@@ -191,6 +206,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginVertical: 50,
     paddingHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   navigationItem: {
     flexDirection: 'row',
