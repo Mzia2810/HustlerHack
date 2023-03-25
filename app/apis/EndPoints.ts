@@ -1,5 +1,6 @@
-export const REGSISTER_USER = 'register-user'
 export const LOGIN_USER = 'login'
+export const REGSISTER_USER = 'register'
+export const PACKAGE = 'packages'
 export const ADD_PACKAGE = 'package/add'
 export const USER_PROFILE = 'user-profile'
-export const PACKAGE = 'package'
+export const SEND_OTP = 'sendotp'

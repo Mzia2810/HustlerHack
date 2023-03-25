@@ -1,59 +1,218 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { Alert } from 'react-native'
 
 import type { PayloadAction } from '@reduxjs/toolkit'
 import ApiInstance from '../../apis/AxiosInstance'
-import { LOGIN_USER } from '../../apis/EndPoints'
+import { LOGIN_USER, REGSISTER_USER, SEND_OTP } from '../../apis/EndPoints'
+import axios, { AxiosError, AxiosResponse } from 'axios';
+export interface FormData {
+    first_name: string,
+    last_name: string,
+    email: string,
+    dob: string,
+    gender: string,
+    password: string,
+    cnic: string,
+    address: string,
+    country: string,
+    phone: string,
+    otp: string,
+}
 export interface loginState {
-    value: number
+    token: string | null;
+    user: any,
+    userData: FormData
+
 }
 
-const initialState: loginState = {
-    value: 0,
+export interface loginParams {
+    number: number, password: string;
+    onSuccess?: () => void;
+    onFailed?: () => void;
+}
+export interface sendOtpParams {
+    phone: number
 }
 
-export const loginUser = createAsyncThunk(
-    'users/login',
-    async (action, { getState, dispatch }) => {
+
+export const sendOtpToPhone = createAsyncThunk(
+    'sendOtp/user',
+    async (action: sendOtpParams, { getState, dispatch }) => {
+        const { phone } = action || {};
+
         console.log('====================================');
-        console.log('ACTION : ', action);
+        console.log('response', action);
         console.log('====================================');
-        const response = await ApiInstance.post(LOGIN_USER, {
-            email: '',
-            password: ''
+        let result = await ApiInstance.post(SEND_OTP, {
+            number: phone,
+
+        }).then(response => {
+
+            console.log('====================================');
+            console.log('response', response);
+            console.log('====================================');
+            const { data, status } = response;
+            return { data, status }
+        }).catch((error: AxiosError) => {
+
+
+            return error?.response;
+
         })
-        return response.data
+
+        return result
     }
 )
+export const registerUser = createAsyncThunk(
+    'register/user',
+    async (action, { getState, dispatch }) => {
+
+        // let data =getState
+        let formData = getState()?.login?.userData || {}
+        let result = await ApiInstance.post(REGSISTER_USER, formData).then(response => {
+            const { data, status } = response;
+            return { data, status }
+        }).catch((error: AxiosError) => {
+            return error?.response;
+
+        })
+
+        return result
+    }
+)
+export const loginUser = createAsyncThunk(
+    'login/user',
+    async (action: loginParams, { getState, dispatch }) => {
+        const { number, password, onFailed, onSuccess } = action;
+        let result = await ApiInstance.post(LOGIN_USER, {
+            phone: number,
+            password: password
+        }).then(response => {
+
+            onSuccess && onSuccess()
+            const { data, status } = response;
+            return { data, status }
+        }).catch((error: AxiosError) => {
+            onFailed && onFailed()
+
+            return error?.response;
+
+        })
+
+        return result
+    }
+)
+
+
+const initialState: loginState = {
+    token: null,
+    user: null,
+    userData: {
+        first_name: '',
+        last_name: '',
+        email: '',
+        dob: '',
+        gender: '',
+        password: '',
+        cnic: '',
+        address: '',
+        country: '',
+        phone: '',
+        otp: '',
+    }
+}
 export const loginSlice = createSlice({
     name: 'login',
     initialState,
     reducers: {
-        increment: (state) => {
-            // Redux Toolkit allows us to write "mutating" logic in reducers. It
-            // doesn't actually mutate the state because it uses the Immer library,
-            // which detects changes to a "draft state" and produces a brand new
-            // immutable state based off those changes
-            state.value += 1
-        },
-        decrement: (state) => {
-            state.value -= 1
-        },
-        incrementByAmount: (state, action: PayloadAction<number>) => {
-            state.value += action.payload
-        },
-    },
 
-    extraReducers(builder) {
-        builder.addCase(loginUser.fulfilled, (state, action) => {
-            //do what ever you want
-        });
-        builder.addCase(loginUser.rejected, (state, actione) => {
-            //failed
-        })
+        clearToken: (state) => {
+            state.token = null;
+        },
+        updateSignupForm: (state, action) => {
+            state.userData = { ...state.userData, ...action.payload }
+        }
     },
+    extraReducers: (builder) => {
+        builder
+            .addCase(loginUser.pending, (state) => {
+                state.user = 'pendig'
+                // state.status = 'loading';
+            })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                const { data, status } = action.payload;
+                console.log('data', action.payload);
+                if (status >= 200 && status < 300) {
+
+                    const { msg, token } = data || {}
+
+                    console.log('STATE : ', state.token);
+
+                    if (token) {
+                        state.token = token;
+                        state.user = 'TANVEER'
+                    }
+
+
+
+                } else {
+                    const { msg } = data;
+                    msg && typeof msg == 'string' && Alert.alert(`${msg}`)
+                }
+            })
+            .addCase(loginUser.rejected, (state, action) => {
+
+            });
+        builder
+            .addCase(sendOtpToPhone.pending, (state) => {
+
+            })
+            .addCase(sendOtpToPhone.fulfilled, (state, action) => {
+                const { data, status } = action.payload;
+
+                const { msg } = data || {};
+                msg && typeof msg == 'string' && Alert.alert(`${msg}`)
+            })
+            .addCase(sendOtpToPhone.rejected, (state, action) => {
+
+            });
+        //register
+        builder
+            .addCase(registerUser.pending, (state) => {
+
+            })
+            .addCase(registerUser.fulfilled, (state, action) => {
+                const { data, status } = action.payload;
+
+                console.log('====================================');
+                console.log('SIGNUP : ', action.payload);
+                console.log('====================================');
+                if (status >= 200 && status < 300) {
+
+                    const { msg, token } = data || {}
+
+                    if (token) {
+                        state.token = token;
+                        state.user = 'TANVEER'
+
+                    }
+
+
+
+                } else {
+                    const { msg } = data;
+                    msg && typeof msg == 'string' && Alert.alert(`${msg}`)
+                }
+            })
+            .addCase(registerUser.rejected, (state, action) => {
+
+            });
+    }
+
+
 })
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = loginSlice.actions
+export const { clearToken, updateSignupForm } = loginSlice.actions
 
 export default loginSlice.reducer

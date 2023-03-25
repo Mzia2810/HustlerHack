@@ -10,15 +10,73 @@ import {
   TextInput,
   TouchableNativeFeedback,
   View,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useDispatch, useSelector } from 'react-redux';
+import { sendOtpToPhone, updateSignupForm } from '../store/storeSlices/loginSlice';
 const Signup = () => {
-  const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch()
+  const { userData } = useSelector(state => state.login)
+
+  const [sendingOtp, setsendingOtp] = useState(false);
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [states, setStates] = useState({
+    phone: '',
+    otp: '',
+    password: '',
+    confirm_password: ''
+  })
+
+  const onSendOTP = async () => {
+    //todo
+    const { phone, otp, password, confirm_password } = states
+    if (!phone) {
+      Alert.alert('Enter phone number to send an OTP');
+      return
+    }
+    setsendingOtp(true)
+    dispatch(sendOtpToPhone({ phone }))
+    setTimeout(() => {
+      setsendingOtp(false)
+    }, 3000);
+  }
+  const onNext = () => {
+    const { phone, otp, password, confirm_password } = states
+    if (!otp || !password || !phone || !confirm_password) {
+      Alert.alert('One of the required field is missing.');
+      return
+    }
+    if (password != confirm_password) {
+      Alert.alert('Password should be same')
+      return;
+    }
+    dispatch(updateSignupForm({
+      phone,
+      password,
+      otp
+    }))
+
+    navigation.navigate('PersonalInfo')
+  }
+
+  React.useEffect(() => {
+    const { phone, otp, password, } = userData || {}
+    setStates({
+      ...states,
+      password,
+      phone,
+      otp,
+      confirm_password: password
+    })
+  }, [])
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
-      style={{flex: 1, justifyContent: 'center'}}>
+      style={{ flex: 1, justifyContent: 'center' }}>
       <ImageBackground
         resizeMode="cover"
         source={require('../assets/bg.png')}
@@ -32,15 +90,24 @@ const Signup = () => {
             }}>
             <Image
               source={require('../assets/logo.png')}
-              style={{width: 278, height: 53, marginTop: 50, marginBottom: 10}}
+              style={{ width: 278, height: 53, marginTop: 50, marginBottom: 10 }}
             />
             <View style={styles.form}>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Phone Number</Text>
                 <TextInput
+
                   style={styles.input}
                   placeholder="+255 (0) 7xxxxxxxx"
                   keyboardType="phone-pad"
+
+                  value={states.phone}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      phone: text
+                    })
+                  }}
                 />
               </View>
 
@@ -49,21 +116,46 @@ const Signup = () => {
               </View>
               <View style={styles.numberVerify}>
                 <TextInput
-                  placeholder="+255 (0) 7xxxxxxxx"
+                  placeholder="Enter otp"
                   keyboardType="phone-pad"
+                  maxLength={6}
+                  value={states.otp}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      otp: text
+                    })
+                  }}
                 />
-                <Text style={styles.VerifyBtn}>SEND</Text>
+                {
+                  sendingOtp ? <ActivityIndicator size={'small'} /> :
+                    <TouchableOpacity onPress={onSendOTP}>
+                      <Text style={styles.VerifyBtn}>SEND</Text>
+                    </TouchableOpacity>
+                }
               </View>
 
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Password</Text>
-                <TextInput style={styles.input} placeholder="Input Password" />
+                <TextInput style={styles.input} placeholder="Input Password" value={states.password}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      password: text
+                    })
+                  }} />
               </View>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Confirm Password</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Confirm Password"
+                  placeholder="Confirm Password" value={states.confirm_password}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      confirm_password: text
+                    })
+                  }}
                 />
               </View>
               <View style={styles.formCheckbox}>
@@ -78,7 +170,7 @@ const Signup = () => {
               </View>
               <View style={styles.formBtnContainer}>
                 <TouchableNativeFeedback
-                  onPress={() => navigation.navigate('PersonalInfo')}>
+                  onPress={onNext}>
                   <View style={styles.formBtn}>
                     <Text style={styles.btnText}>NEXT</Text>
                   </View>

@@ -1,16 +1,27 @@
 import React from 'react';
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../store/configStore'
+const WelcomeScreen = ({ navigation }) => {
 
-const WelcomeScreen = ({navigation}) => {
-  setTimeout(() => {
-    navigation.replace('ChangeLanguage');
-  }, 5000);
+  const state = useSelector(state => state.login)
+
+
+
+  React.useEffect(() => {
+    console.log('====================================');
+    console.log('state',state?.token);
+    console.log('====================================');
+    !!state?.token ? navigation.replace('AuthenticatedStack') : setTimeout(() => {
+      navigation.replace('ChangeLanguage');
+    }, 2500);
+  }, [])
 
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
-      style={{flex: 1, justifyContent: 'center'}}>
+      style={{ flex: 1, justifyContent: 'center' }}>
       <ImageBackground
         resizeMode="cover"
         source={require('../assets/bg.png')}
@@ -23,7 +34,7 @@ const WelcomeScreen = ({navigation}) => {
           }}>
           <Image
             source={require('../assets/logo.png')}
-            style={{width: 278, height: 53}}
+            style={{ width: 278, height: 53 }}
           />
           <Text
             style={{
