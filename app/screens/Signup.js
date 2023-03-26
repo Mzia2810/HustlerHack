@@ -21,6 +21,7 @@ const Signup = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const { userData } = useSelector(state => state.login)
+  const appState = useSelector(state => state.appState) || {}
 
   const [sendingOtp, setsendingOtp] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -38,11 +39,33 @@ const Signup = () => {
       Alert.alert('Enter phone number to send an OTP');
       return
     }
-    setsendingOtp(true)
-    dispatch(sendOtpToPhone({ phone }))
-    setTimeout(() => {
+    // setsendingOtp(true)
+    // dispatch(sendOtpToPhone({ phone }))
+    // setTimeout(() => {
+    //   setsendingOtp(false)
+    // }, 3000);
+
+    let otpLife = appState?.otpLife;
+
+    if (otpLife == 3) {
+      dispatch(changeOtpReCycleTime())
+    }
+    if (otpLife > 0 && otpLife <= 3) {
+      setsendingOtp(true);
+      let response = await dispatch(sendOtpToPhone({ phone }))
+      if (response?.payload?.status >= 200 && response?.payload?.status < 300) {
+        dispatch(chaneOtpLifeCycle())
+        Alert.alert('Attention!', `OTP sent to ${phone}`)
+      } else {
+        response?.payload?.data?.errorMessage && typeof response?.payload?.data?.errorMessage === 'string' &&
+          Alert.alert('Attention!', `${response?.payload?.data?.errorMessage}`)
+      }
       setsendingOtp(false)
-    }, 3000);
+
+    } else {
+
+      Alert.alert('OTP', 'You exceeded daily limit of OTP')
+    }
   }
   const onNext = () => {
     const { phone, otp, password, confirm_password } = states
@@ -137,7 +160,8 @@ const Signup = () => {
 
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Password</Text>
-                <TextInput style={styles.input} placeholder="Input Password" value={states.password}
+                <TextInput style={styles.input} placeholder="Input Password"
+                  value={states.password}
                   onChangeText={(text) => {
                     setStates({
                       ...states,
@@ -149,7 +173,8 @@ const Signup = () => {
                 <Text style={styles.inputLabel}>Confirm Password</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Confirm Password" value={states.confirm_password}
+                  placeholder="Confirm Password"
+                  value={states.confirm_password}
                   onChangeText={(text) => {
                     setStates({
                       ...states,

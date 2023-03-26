@@ -52,6 +52,10 @@ const GetMoneyModal = () => {
     setProcessing(true);
   };
 
+  React.useEffect(()=>{
+    // modalOpen( )
+  },[])
+
   return (
     <View style={styles.centeredView}>
       <Modal

@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  SafeAreaView
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -223,14 +224,14 @@ const renderItem = ({ item }) => {
   return (
     <View>
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={{ textAlign: 'justify' }}>{item.desc}</Text>
+      <Text style={{ textAlign: 'justify', color: "#000", }}>{item.desc}</Text>
     </View>
   );
 };
 
-const Premission = ({navigation}) => {
+const Premission = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
- 
+
   const dispatch = useDispatch()
 
 
@@ -244,11 +245,22 @@ const Premission = ({navigation}) => {
     navigation.navigate('Privacy')
   }
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ width: wp('40%'), alignSelf: 'center', marginTop: 10 }}>
-        <Image source={require('../assets/PLogo.png')} />
-        <Text style={styles.Premission}>Permissions Disclosure</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', height: '100%', padding:wp(4) }}>
+      <View style={{
+        width: wp('100%'),
+        justifyContent: 'center',
+        alignItems: 'center',
+        // padding: 10
+      }}>
+        <Image style={{
+          resizeMode: 'contain',
+          height: hp(6),
+          width: wp(30),
+          alignSelf: 'center',
+
+        }} source={require('../assets/PLogo.png')} />
       </View>
+      <Text style={styles.Premission}>Permissions Disclosure</Text>
       <View style={{ width: wp('90%'), height: hp('76%'), alignSelf: 'center' }}>
         <FlatList
           style
@@ -262,52 +274,59 @@ const Premission = ({navigation}) => {
           <Text style={styles.btntext}>I Disagree</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setVisible(true)} style={styles.btn2}>
-          <Text style={[styles.btntext, {color: 'white'}]}>I Agree</Text>
+          <Text style={[styles.btntext, { color: 'white' }]}>I Agree</Text>
         </TouchableOpacity>
 
         <Modal
           transparent
           visible={visible}
           onRequestClose={() => setVisible(false)}>
-          <TouchableOpacity style={{flex: 1}} onPress={() => setVisible(false)}>
-            <View style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', flex: 1}} />
-          </TouchableOpacity>
-          <View style={styles.modalView}>
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: '600',
-                lineHeight: 18,
-                color: 'black',
-              }}>
-              Notice
-            </Text>
-            <View>
-              <Text style={{textAlign:'center',marginTop:20}}>
-                In order to evaluate your qualifications and provide you with
-                better services, we need your authorization to collect your
-                relevant information. Please confirm whether to deny the
-                permission and understand that this operation will exit the APP,
-                or cancel the operation?{' '}
-              </Text>
-            </View>
+          <TouchableOpacity style={{
+            flex: 1, backgroundColor: '#00000040',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+            activeOpacity={1}
+            onPress={() => setVisible(false)}>
 
-            <View style={styles.bntParentModal}>
-              <TouchableOpacity
-              onPress={() =>setVisible(false)}
-              style={styles.btn1Modal}>
-                <Text style={styles.btntext}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={onCofirm}
-                style={styles.btn2Modal}>
-                <Text style={[styles.btntext, {color: 'white'}]}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+
+            <TouchableOpacity activeOpacity={1} style={styles.modalView}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: '600',
+                  // lineHeight: 18,
+                  color: "#000",
+                }}>
+                Notice
+              </Text>
+              <View>
+                <Text style={{ textAlign: 'justify', marginVertical: hp(2), color: "#000", }}>
+                  In order to evaluate your qualifications and provide you with
+                  better services, we need your authorization to collect your
+                  relevant information. Please confirm whether to deny the
+                  permission and understand that this operation will exit the APP,
+                  or cancel the operation?{' '}
+                </Text>
+              </View>
+
+              <View style={styles.bntParentModal}>
+                <TouchableOpacity
+                  onPress={() => setVisible(false)}
+                  style={styles.btn1Modal}>
+                  <Text style={styles.btntext}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={onCofirm}
+                  style={styles.btn2Modal}>
+                  <Text style={[styles.btntext, { color: 'white' }]}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </TouchableOpacity>
         </Modal>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -316,21 +335,24 @@ export default Premission;
 const styles = StyleSheet.create({
   modalView: {
     backgroundColor: '#fff',
-    padding: 20,
-    position: 'absolute',
     justifyContent: 'center',
     alignSelf: 'center',
     alignItems: 'center',
     width: wp('80%'),
-    marginTop: hp('20%'),
-    borderRadius:10,
+    borderRadius: 10,
+    paddingVertical: hp(2),
+    paddingHorizontal: wp(2)
   },
   Premission: {
-    fontSize: 14,
+    color: "#000",
+    fontSize: 22,
     fontWeight: '700',
-    lineHeight: 17,
-    marginVertical: 20,
+    textAlign:'center',
+    // lineHeight: 17,
+    // marginVertical: 20,
     width: '100%',
+    marginTop:hp(1),
+    marginBottom:hp(2)
   },
   bntParent: {
     width: wp('90%'),
@@ -342,12 +364,13 @@ const styles = StyleSheet.create({
   bntParentModal: {
     width: wp('70%'),
     alignSelf: 'center',
-    marginTop: hp('10%'),
+    // marginTop: hp('10%'),
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   title: {
     fontSize: 20,
+    color: "#000",
     fontWeight: '700',
     lineHeight: 20,
     marginVertical: hp('1%'),

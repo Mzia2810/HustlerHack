@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { StoreState } from '../store/configStore';
@@ -7,26 +7,8 @@ import { StoreState } from '../store/configStore';
 const Notifications = () => {
   const dispatch = useDispatch();
   const { notifications } = useSelector<StoreState, any>(state => state.notifications)
-  const data = [
-    {
-      id: 1,
-      text: 'sdgergetg orep epsum sdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsum',
-      date: '02/23/2023',
-      time: '19:09',
-    },
-    {
-      id: 2,
-      text: 'sdgergetg orep epsum sdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsum',
-      date: '02/23/2023',
-      time: '19:09',
-    },
-    {
-      id: 3,
-      text: 'sdgergetg orep epsum sdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsum',
-      date: '02/23/2023',
-      time: '19:09',
-    },
-  ];
+  
+  
   return (
     <View style={styles.container}>
       <View style={styles.dropdownAll}>
@@ -38,19 +20,28 @@ const Notifications = () => {
           color="#000000"
         />
       </View>
-      <View style={{ marginTop: 30 }}>
-        {!!notifications && notifications?.map(item => (
-          <View key={item.id} style={{ marginBottom: 20 }}>
+      <ScrollView style={{
+      flex:1,
+      }}
+      contentContainerStyle={{
+        margin:8
+      }}
+      >
+
+  
+        {!!notifications && notifications?.map((item,index) => (
+          <View key={index} style={{ marginBottom: 20 }}>
             <View style={styles.cardTextMain}>
-              <Text style={styles.cardText}>{item.text}</Text>
+              <Text style={styles.cardText}>{item.ResponseDescription}</Text>
             </View>
             <View style={styles.cardDateMain}>
-              <Text style={styles.cardDateText}>{item.date}</Text>
-              <Text style={styles.cardTimeMain}>{item.time}</Text>
+              <Text style={styles.cardDateText}>{new Date(item.created_at).toDateString()}</Text>
+              <Text style={styles.cardTimeMain}>{new Date(item.created_at).toTimeString()}</Text>
             </View>
           </View>
         ))}
-      </View>
+      
+        </ScrollView>
       <Text
         style={{
           textAlign: 'center',
@@ -58,7 +49,8 @@ const Notifications = () => {
           fontSize: 14,
           lineHeight: 17,
           color: '#008325',
-          marginTop: 140,
+          paddingVertical:8
+          // marginTop: 140,
         }}>
         Powered by hustlerfundhack.co.ke
       </Text>
@@ -70,7 +62,7 @@ export default Notifications;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15,
+    // padding: 15,
     flex: 1,
     backgroundColor: '#ffffff',
   },

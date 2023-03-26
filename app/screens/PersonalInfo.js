@@ -48,7 +48,7 @@ const PersonalInfo = () => {
     }))
     setTimeout(async () => {
       let response = await dispatch(registerUser())
-      if (response?.status >= 200 && response?.status < 300) {
+      if (response?.payload?.status >= 200 && response?.payload?.status < 300) {
         navigation.dispatch(
           CommonActions.reset({
             index: 1,

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 import { Alert } from "react-native";
 import ApiInstance from "../../apis/AxiosInstance";
-import { PACKAGE, USER_PROFILE } from "../../apis/EndPoints";
+import { CHANGE_PACKAGE_STATUS, PACKAGE, USER_PROFILE } from "../../apis/EndPoints";
 
 export interface IPackage {
     id: number
@@ -19,10 +19,30 @@ export interface initialState {
     packages: Array<IPackage>
 }
 
-export const getPackages = createAsyncThunk('user/packages', async (action, { getState, dispatch }) => {
+export const getPackages = createAsyncThunk('getPackages/packages', async (action, { getState, dispatch }) => {
 
     const response = ApiInstance(PACKAGE).then((response) => {
         const { status, data } = response;
+        return { status, data }
+    }).catch((error: AxiosError) => {
+        return error.response
+    })
+
+    return response;
+
+});
+
+
+export interface changePackageStatusParams {
+    package_id: number
+}
+export const changePackageStatus = createAsyncThunk('changePackageStatus/packages', async (action: changePackageStatusParams, { getState, dispatch }) => {
+    const { package_id } = action
+    const response = ApiInstance.post(CHANGE_PACKAGE_STATUS, {
+        package_id
+    }).then((response) => {
+        const { status, data } = response;
+        dispatch(getPackages())
         return { status, data }
     }).catch((error: AxiosError) => {
         return error.response
@@ -49,7 +69,7 @@ const packagesSlice = createSlice({
                 if (status >= 200 && status < 300) {
 
                     if (data) {
-                        if('packages' in data){
+                        if ('packages' in data) {
 
                             state.packages = data?.packages;
                             return

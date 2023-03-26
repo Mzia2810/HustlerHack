@@ -34,6 +34,8 @@ const App = () => {
 
   return (
     <Provider store={store}>
+      <PersistGate persistor={persistor}>
+
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -49,9 +51,10 @@ const App = () => {
           name="AuthenticatedStack"
           component={AuthenticatedStack}
           options={{ headerShown: false }}
-        />
+          />
       </Stack.Navigator>
     </NavigationContainer>
+          </PersistGate>
     </Provider>
   );
 };

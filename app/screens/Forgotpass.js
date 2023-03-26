@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -8,15 +8,92 @@ import {
   Text,
   TextInput,
   TouchableNativeFeedback,
-  View
+  View,
+  Alert,
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useDispatch, useSelector } from 'react-redux';
+import { chaneOtpLifeCycle, changeOtpReCycleTime } from '../store/storeSlices/appStateSlicer';
+import { forgotPassword, sendForgotOtp, sendOtpToPhone } from '../store/storeSlices/loginSlice';
+import moment from "moment";
 const ForgotPass = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch()
+  const appState = useSelector(state => state.appState) || {}
+  const [sendingOtp, setsendingOtp] = useState(false);
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [states, setStates] = useState({
+    phone: '',
+    otp: '',
+    password: '',
+    confirm_password: ''
+  })
+
+  const onSendOTP = async () => {
+
+
+    const { phone, otp, password, confirm_password } = states
+    if (!phone) {
+      Alert.alert('Enter phone number to send an OTP');
+      return
+    }
+
+    let otpLife = appState?.otpLife;
+
+    if (otpLife == 3) {
+      dispatch(changeOtpReCycleTime())
+    }
+    if (otpLife > 0 && otpLife <= 3) {
+      setsendingOtp(true);
+      let response = await dispatch(sendForgotOtp({ phone }))
+      if (response?.payload?.status >= 200 && response?.payload?.status < 300) {
+        dispatch(chaneOtpLifeCycle())
+        Alert.alert('Attention!', `OTP sent to ${phone}`)
+      } else {
+        response?.payload?.data?.errorMessage && typeof response?.payload?.data?.errorMessage === 'string' &&
+          Alert.alert('Attention!', `${response?.payload?.data?.errorMessage}`)
+      }
+      setsendingOtp(false)
+
+    } else {
+
+      Alert.alert('OTP','You exceeded daily limit of OTP')
+    }
+
+
+  }
+  const onNext = () => {
+    const { phone, otp, password, confirm_password } = states
+    if (!otp || !password || !phone || !confirm_password) {
+      Alert.alert('One of the required field is missing.');
+      return
+    }
+    if (password != confirm_password) {
+      Alert.alert('Password should be same')
+      return;
+    }
+
+    let response = dispatch(forgotPassword({
+      otp,
+      password,
+      phone
+    }))
+    if (response?.payload?.status >= 200 && response?.payload?.status < 300) {
+      navigation.replace('Login')
+    } else {
+      response?.payload?.data?.errorMessage && typeof response?.payload?.data?.errorMessage === 'string' &&
+        Alert.alert('Attention!', `${response?.payload?.data?.errorMessage}`)
+    }
+
+    // navigation.navigate('PersonalInfo')
+  }
+
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
-      style={{flex: 1, justifyContent: 'center'}}>
+      style={{ flex: 1, justifyContent: 'center' }}>
       <ImageBackground
         resizeMode="cover"
         source={require('../assets/bg.png')}
@@ -30,15 +107,25 @@ const ForgotPass = () => {
             }}>
             <Image
               source={require('../assets/logo.png')}
-              style={{width: 278, height: 53, marginTop: 50, marginBottom: 50}}
+              style={{ width: 278, height: 53, marginTop: 50, marginBottom: 50 }}
             />
             <View style={styles.form}>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Phone Number</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, {
+                    // width:'90%'
+                  }]}
+
                   placeholder="+255 (0) 7xxxxxxxx"
                   keyboardType="phone-pad"
+                  value={states.phone}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      phone: text
+                    })
+                  }}
                 />
               </View>
               <View style={styles.OtpLable}>
@@ -46,24 +133,55 @@ const ForgotPass = () => {
               </View>
               <View style={styles.numberVerify}>
                 <TextInput
-                  placeholder="+255 (0) 7xxxxxxxx"
+                  style={{
+                    width: '70%'
+                  }}
+                  placeholder="Enter otp"
                   keyboardType="phone-pad"
+                  maxLength={6}
+                  value={states.otp}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      otp: text
+                    })
+                  }}
                 />
-                <Text style={styles.VerifyBtn}>SEND</Text>
+                {
+                  sendingOtp ? <ActivityIndicator size={'small'} /> :
+                    <TouchableOpacity onPress={onSendOTP}>
+                      <Text style={styles.VerifyBtn}>SEND</Text>
+                    </TouchableOpacity>
+                }
               </View>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Password</Text>
-                <TextInput style={styles.input} placeholder="Input Password" />
+                <TextInput style={styles.input} placeholder="Input Password"
+                  value={states.password}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      password: text
+                    })
+                  }}
+                />
               </View>
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Confirm Password</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Confirm Password"
+                  value={states.confirm_password}
+                  onChangeText={(text) => {
+                    setStates({
+                      ...states,
+                      confirm_password: text
+                    })
+                  }}
                 />
               </View>
               <View style={styles.formBtnContainer}>
-                <TouchableNativeFeedback>
+                <TouchableNativeFeedback onPress={onNext}>
                   <View style={styles.formBtn}>
                     <Text style={styles.btnText}>NEXT</Text>
                   </View>
