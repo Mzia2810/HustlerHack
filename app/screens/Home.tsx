@@ -26,11 +26,11 @@ import { addToRecord, getAccessToken, initiateLipsPissa, proccedPayment } from '
 import ModalView from '../components/ModalView';
 import { addToNotificaton } from '../store/storeSlices/notificationSlice';
 import { widthPercentageToDP, heightPercentageToDP } from 'react-native-responsive-screen'
-import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Carousel from '../components/Carousel';
+
 
 const Home = () => {
   const dispatch = useDispatch();
-  const translateY = useSharedValue(Dimensions.get('window').height - 100);
 
   const user = useSelector<StoreState, userInitialStates>(state => state.user)
   const { packages } = useSelector<StoreState, any>(state => state.packages) || {}
@@ -47,23 +47,7 @@ const Home = () => {
   { text: `Review completed`, isCompleted: false }
   ])
 
-  const data = [
-    {
-      id: 1,
-      text: <Text style={styles.loanAmountTextGreen}>Available</Text>,
-      dollar: '1,500',
-    },
-    {
-      id: 2,
-      text: <Text style={styles.loanAmountTextRed}>Unavailable</Text>,
-      dollar: '8,500',
-    },
-    {
-      id: 3,
-      text: <Text style={styles.loanAmountTextRed}>Unavailable</Text>,
-      dollar: '15,000',
-    },
-  ];
+
 
   const onOkay = async () => {
     setModalStep(1);
@@ -161,15 +145,6 @@ const Home = () => {
 
   }
 
-  // const style = useAnimatedStyle(() => {
-  //   return {
-  //     transform: [
-  //       {
-  //         translateY: translateY.value
-  //       }
-  //     ]
-  //   };
-  // });
 
   React.useEffect(() => {
     setfloatingText('HAHHA')
@@ -183,17 +158,6 @@ const Home = () => {
   }, [packages])
 
 
-  // React.useEffect(()=>{
-
-  //   // if(!!floatingText){
-  //     translateY.value = withTiming(!!floatingText ? Dimensions.get('window').height/1.5: Dimensions.get('window').height,{
-  //       duration:1000
-  //     })
-  //   // }
-  //   setTimeout(() => {
-  //     setfloatingText('0');
-  //   }, 2000);
-  // },[])
 
 
   return (
@@ -295,34 +259,44 @@ const Home = () => {
         </View>
 
 
-{
-  !isfetchingData &&
-        <View style={{  }}>
-          <ScrollView contentContainerStyle={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexGrow:1
+        {
+          !isfetchingData &&
+          <View style={{ 
+            width:'95%',
+            alignSelf:'center',
+            height: 100, justifyContent: 'center', alignItems: 'center',
+          backgroundColor:"#F9B125",
+          borderRadius:Dimensions.get('window').width/2,
+          overflow:'hidden',
+          elevation:4,
+          shadowColor:'#000'
           }}>
 
-            <View style={styles.hustlerFund}>
-              <Text style={styles.hustlerFundText}>
-                07######98 has successfully extended hustler fund loan limit to ksh
-                1,500
-              </Text>
-              <Text style={styles.hustlerFundText}>
-                07######98 has successfully extended hustler fund loan limit to ksh
-                1,500
-              </Text>
-              <Text style={styles.hustlerFundText}>
-                07######98 has successfully extended hustler fund loan limit to ksh
-                1,500
-              </Text>
-            </View>
-          </ScrollView>
+            {/* <ScrollView contentContainerStyle={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexGrow: 1
+            }}>
 
-        </View>
+              <View style={styles.hustlerFund}>
+                <Text style={styles.hustlerFundText}>
+                  07######98 has successfully extended hustler fund loan limit to ksh
+                  1,500
+                </Text>
+                <Text style={styles.hustlerFundText}>
+                  07######98 has successfully extended hustler fund loan limit to ksh
+                  1,500
+                </Text>
+                <Text style={styles.hustlerFundText}>
+                  07######98 has successfully extended hustler fund loan limit to ksh
+                  1,500
+                </Text>
+              </View>
+            </ScrollView> */}
+            <Carousel />
+          </View>
 
-}
+        }
         {/* <GetMoneyModal /> */}
         <Text
           style={{

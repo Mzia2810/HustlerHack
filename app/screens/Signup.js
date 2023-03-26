@@ -99,17 +99,21 @@ const Signup = () => {
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
-      style={{ flex: 1, justifyContent: 'center' }}>
+      style={{ flex: 1, justifyContent: 'center', }}>
       <ImageBackground
         resizeMode="cover"
         source={require('../assets/bg.png')}
         style={styles.image}>
-        <ScrollView>
+        <ScrollView style={{
+           margin:8,
+           flexGrow:1
+        }}>
           <View
             style={{
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
+              // borderWidth:1
             }}>
             <Image
               source={require('../assets/logo.png')}
@@ -185,6 +189,13 @@ const Signup = () => {
               </View>
               <View style={styles.formCheckbox}>
                 <CheckBox
+                  tintColor={'#000'}
+                  onCheckColor={'#3467FF'}
+                  onFillColor={'#3467FF'}
+                  tintColors={{
+                    true: '#3467FF',
+                    false: '#000'
+                  }}
                   disabled={false}
                   value={toggleCheckBox}
                   onValueChange={newValue => setToggleCheckBox(newValue)}
@@ -226,7 +237,9 @@ const styles = StyleSheet.create({
     height: 568,
     width: '100%',
   },
-
+  label: {
+    color: '#000'
+  },
   inputLabel: {
     fontSize: 14,
     color: '#000000',

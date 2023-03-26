@@ -2,8 +2,9 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Image, LogBox } from 'react-native';
+import { Image, LogBox, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import ChangeLanguage from './app/screens/ChangeLanguage';
 import ContactUs from './app/screens/ContactUs';
 import CustomDrawer from './app/screens/CustomDrawer';
@@ -24,6 +25,7 @@ import Privacy from './app/screens/Privacy';
 import { Provider } from 'react-redux'
 import { store, persistor } from './app/store/configStore';
 import { PersistGate } from 'redux-persist/integration/react';
+import { ScrollView } from 'react-native';
 
 
 const Stack = createNativeStackNavigator();
@@ -36,25 +38,25 @@ const App = () => {
     <Provider store={store}>
       <PersistGate persistor={persistor}>
 
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        <Stack.Screen name="Premission" component={Premission} />
-        <Stack.Screen name="Privacy" component={Privacy} />
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Premission" component={Premission} />
+            <Stack.Screen name="Privacy" component={Privacy} />
 
-        <Stack.Screen name="ChangeLanguage" component={ChangeLanguage} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="ForgotPass" component={ForgotPass} />
-        <Stack.Screen name="PersonalInfo" component={PersonalInfo} />
-        <Stack.Screen
-          name="AuthenticatedStack"
-          component={AuthenticatedStack}
-          options={{ headerShown: false }}
-          />
-      </Stack.Navigator>
-    </NavigationContainer>
-          </PersistGate>
+            <Stack.Screen name="ChangeLanguage" component={ChangeLanguage} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Signup" component={Signup} />
+            <Stack.Screen name="ForgotPass" component={ForgotPass} />
+            <Stack.Screen name="PersonalInfo" component={PersonalInfo} />
+            <Stack.Screen
+              name="AuthenticatedStack"
+              component={AuthenticatedStack}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   );
 };
@@ -134,6 +136,18 @@ const AuthenticatedStack = () => {
         }}
       />
       <Drawer.Screen
+        name="FAQ's"
+        component={FaqScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: '#a7e5b9',
+          },
+          headerTitleAlign: 'center',
+          drawerLabel: "FAQ's",
+          drawerIcon: () => <Icon2 name="frequently-asked-questions" color="#000000" size={25} />,
+        }}
+      />
+      <Drawer.Screen
         name="Contact Us"
         component={ContactUs}
         options={{
@@ -157,13 +171,49 @@ const AuthenticatedStack = () => {
           drawerIcon: () => <Icon name="mail" color="#000000" size={25} />,
         }}
       />
-      
-    
-   
+
+
+
+
     </Drawer.Navigator>
   );
 };
 
+const FaqScreen = () => {
+  return (
+    <View style={{ flex: 1, }}>
+      <ScrollView style={{ flex: 1 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          padding: 16
+        }}
+      >
+        {
+          [
+            `Frequently asked questions`,
+            ' ',
+            `What is hustlerhack`,
+            `Hustlerhack is a kenyan company running under hustlerfundhack whose main priority is to ensure kenyans who are elligible for Hustlerfund Personal loan to get their loan limits extended and provide a favourabe repayment plan for each client.`, `How long does it take to get my loan limit extended?`,
+            `It takes between 2hrs to 72hrs to get your loan limit extended.`,
+            ' ',
+            `How can i confirm that my loan limit has been extended?`,
+            ' ',
+            `You can simply dial *254# and check on your personal Loan limit`,
+            ' ',
+            `Does it work with business loans`,
+            ' ',
+            `No, we only extend personal loans`
+          ]?.map((text, index) => {
+            return (
+              <Text key={index} style={{ color: '#000',fontSize:14,fontWeight:'500', textAlign: 'justify' }}>{text}</Text>
+            )
+          })
+        }
+
+      </ScrollView>
+    </View>
+  )
+}
 const LogoTitle = () => {
   return (
     <Image
