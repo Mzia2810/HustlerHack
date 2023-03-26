@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
+import moment from "moment";
 import ApiInstance from "../../apis/AxiosInstance";
 import { PACKAGE, USER_PROFILE } from "../../apis/EndPoints";
 
@@ -9,6 +10,8 @@ const appStateSlice = createSlice({
         isAgreedTermsAgreed: false,
         isPermissionAgreed: false,
         isPrivacyPolicyAgreed: false,
+        otpLife: 3,
+        otpReCycleTime: ''
     },
     reducers: {
 
@@ -16,17 +19,19 @@ const appStateSlice = createSlice({
             state.isAgreedTermsAgreed = action.payload
         },
         changePermissionState: (state, action) => {
-            console.log('====================================');
-            console.log('action.payload changePermissionState',action.payload);
-            console.log('====================================');
+
             state.isPermissionAgreed = action.payload
         },
         changePrivacyPolicyState: (state, action) => {
-            console.log('====================================');
-            console.log('action.payload changePrivacyPolicyState',action.payload);
-            console.log('====================================');
+
             state.isPrivacyPolicyAgreed = action.payload
         },
+        chaneOtpLifeCycle: (state, action) => {
+            state.otpLife = action?.payload ? action?.payload : parseInt(`${state.otpLife}`) - 1;
+        },
+        changeOtpReCycleTime: (state) => {
+            state.otpReCycleTime = `${moment()}`
+        }
 
     },
     extraReducers(builder) {
@@ -38,5 +43,7 @@ export const {
     changeTermsState,
     changePermissionState,
     changePrivacyPolicyState,
+    chaneOtpLifeCycle,
+    changeOtpReCycleTime
 } = appStateSlice.actions
 export default appStateSlice.reducer

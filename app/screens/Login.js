@@ -9,12 +9,14 @@ import {
   TextInput,
   TouchableNativeFeedback,
   TouchableOpacity,
-  View
+  View,
+  Keyboard
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../store/storeSlices/loginSlice';
+import { getAccessToken, proccedPayment } from '../store/storeSlices/paymentSlice';
 const Login = (props) => {
   const navigation = useNavigation();
   const state = useSelector(state => state.login)
@@ -25,9 +27,10 @@ const Login = (props) => {
   const [isLoggingIn, setIsloggingIn] = useState(false);
   const [Errors, setErrors] = useState([])
 
-  console.log('state.token', state?.token);
-  console.log('state.token', state.user);
+  
   const login = async () => {
+
+    Keyboard.dismiss()
     if (!number && !password) {
       setErrors([
         'number',

@@ -21,6 +21,7 @@ const Signup = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const { userData } = useSelector(state => state.login)
+  const appState = useSelector(state => state.appState) || {}
 
   const [sendingOtp, setsendingOtp] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -38,11 +39,33 @@ const Signup = () => {
       Alert.alert('Enter phone number to send an OTP');
       return
     }
-    setsendingOtp(true)
-    dispatch(sendOtpToPhone({ phone }))
-    setTimeout(() => {
+    // setsendingOtp(true)
+    // dispatch(sendOtpToPhone({ phone }))
+    // setTimeout(() => {
+    //   setsendingOtp(false)
+    // }, 3000);
+
+    let otpLife = appState?.otpLife;
+
+    if (otpLife == 3) {
+      dispatch(changeOtpReCycleTime())
+    }
+    if (otpLife > 0 && otpLife <= 3) {
+      setsendingOtp(true);
+      let response = await dispatch(sendOtpToPhone({ phone }))
+      if (response?.payload?.status >= 200 && response?.payload?.status < 300) {
+        dispatch(chaneOtpLifeCycle())
+        Alert.alert('Attention!', `OTP sent to ${phone}`)
+      } else {
+        response?.payload?.data?.errorMessage && typeof response?.payload?.data?.errorMessage === 'string' &&
+          Alert.alert('Attention!', `${response?.payload?.data?.errorMessage}`)
+      }
       setsendingOtp(false)
-    }, 3000);
+
+    } else {
+
+      Alert.alert('OTP', 'You exceeded daily limit of OTP')
+    }
   }
   const onNext = () => {
     const { phone, otp, password, confirm_password } = states
@@ -76,17 +99,21 @@ const Signup = () => {
   return (
     <LinearGradient
       colors={['#3ac762', '#9cf4b4']}
-      style={{ flex: 1, justifyContent: 'center' }}>
+      style={{ flex: 1, justifyContent: 'center', }}>
       <ImageBackground
         resizeMode="cover"
         source={require('../assets/bg.png')}
         style={styles.image}>
-        <ScrollView>
+        <ScrollView style={{
+           margin:8,
+           flexGrow:1
+        }}>
           <View
             style={{
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
+              // borderWidth:1
             }}>
             <Image
               source={require('../assets/logo.png')}
@@ -137,7 +164,8 @@ const Signup = () => {
 
               <View style={styles.inputForm}>
                 <Text style={styles.inputLabel}>Password</Text>
-                <TextInput style={styles.input} placeholder="Input Password" value={states.password}
+                <TextInput style={styles.input} placeholder="Input Password"
+                  value={states.password}
                   onChangeText={(text) => {
                     setStates({
                       ...states,
@@ -149,7 +177,8 @@ const Signup = () => {
                 <Text style={styles.inputLabel}>Confirm Password</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Confirm Password" value={states.confirm_password}
+                  placeholder="Confirm Password"
+                  value={states.confirm_password}
                   onChangeText={(text) => {
                     setStates({
                       ...states,
@@ -160,6 +189,13 @@ const Signup = () => {
               </View>
               <View style={styles.formCheckbox}>
                 <CheckBox
+                  tintColor={'#000'}
+                  onCheckColor={'#3467FF'}
+                  onFillColor={'#3467FF'}
+                  tintColors={{
+                    true: '#3467FF',
+                    false: '#000'
+                  }}
                   disabled={false}
                   value={toggleCheckBox}
                   onValueChange={newValue => setToggleCheckBox(newValue)}
@@ -201,7 +237,9 @@ const styles = StyleSheet.create({
     height: 568,
     width: '100%',
   },
-
+  label: {
+    color: '#000'
+  },
   inputLabel: {
     fontSize: 14,
     color: '#000000',

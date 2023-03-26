@@ -1,16 +1,23 @@
 import React from 'react';
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { StoreState } from '../store/configStore'
+import { changeOtpReCycleTime } from '../store/storeSlices/appStateSlicer';
+import moment from 'moment'
 const WelcomeScreen = ({ navigation }) => {
 
   const state = useSelector(state => state.login)
   const appState = useSelector(state => state.appState) || {}
+  const dispatch =useDispatch()
 
 
 
   React.useEffect(() => {
+    let timeLeft = moment(appState?.otpReCycleTime)?.diff(moment(), 'hours')
+    if(timeLeft>=24){
+      dispatch(changeOtpReCycleTime())
+    }
     const {
       isPermissionAgreed ,
       isPrivacyPolicyAgreed 

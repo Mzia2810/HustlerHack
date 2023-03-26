@@ -21,31 +21,16 @@ const getAppNotifications = createAsyncThunk('user/notification', async (action,
 });
 const initialState: IinitialState = {
     notifications: [
-        {
-            id: 1,
-            text: 'sdgergetg orep epsum sdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsum',
-            date: '02/23/2023',
-            time: '19:09',
-        },
-        {
-            id: 2,
-            text: 'sdgergetg orep epsum sdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsum',
-            date: '02/23/2023',
-            time: '19:09',
-        },
-        {
-            id: 3,
-            text: 'sdgergetg orep epsum sdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsumsdgergetg orep epsum',
-            date: '02/23/2023',
-            time: '19:09',
-        },
+
     ]
 }
 const notificationSlice = createSlice({
     name: 'notification',
     initialState,
     reducers: {
-
+        addToNotificaton: (state, action) => {
+            state.notifications = state.notifications?.concat(action?.payload)
+        }
     },
     extraReducers(builder) {
         builder.addCase(getAppNotifications.pending, (state, action) => { }).
@@ -77,5 +62,7 @@ const notificationSlice = createSlice({
     }
 })
 
-export const { } = notificationSlice.actions
+export const {
+    addToNotificaton
+} = notificationSlice.actions
 export default notificationSlice.reducer

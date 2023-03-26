@@ -3,7 +3,7 @@ import { Alert } from 'react-native'
 
 import type { PayloadAction } from '@reduxjs/toolkit'
 import ApiInstance from '../../apis/AxiosInstance'
-import { LOGIN_USER, REGSISTER_USER, SEND_OTP } from '../../apis/EndPoints'
+import { FORGET_OTP, FORGOT_PASSOWRD, LOGIN_USER, REGSISTER_USER, SEND_OTP } from '../../apis/EndPoints'
 import axios, { AxiosError, AxiosResponse } from 'axios';
 export interface FormData {
     first_name: string,
@@ -34,23 +34,60 @@ export interface sendOtpParams {
     phone: number
 }
 
+interface forgotPasswordParams {
+    phone: number | string;
+    otp: string;
+    password: string
+}
 
+export const forgotPassword = createAsyncThunk(
+    'forgotPassword/user',
+    async (action: forgotPasswordParams, { getState, dispatch }) => {
+        const { phone, otp, password } = action || {};
+        let result = await ApiInstance.post(FORGOT_PASSOWRD, {
+            phone,
+            otp,
+            password
+        }).then(response => {
+            const { data, status } = response;
+            return { data, status }
+        }).catch((error: AxiosError) => {
+            return error?.response;
+
+        })
+
+        return result
+    }
+)
+
+export const sendForgotOtp = createAsyncThunk(
+    'sendForgotOtp/user',
+    async (action: sendOtpParams, { getState, dispatch }) => {
+        const { phone } = action || {};
+        let result = await ApiInstance.post(FORGET_OTP, {
+            phone,
+
+        }).then(response => {
+            const { data, status } = response;
+            return { data, status }
+        }).catch((error: AxiosError) => {
+
+
+            return error?.response;
+
+        })
+
+        return result
+    }
+)
 export const sendOtpToPhone = createAsyncThunk(
     'sendOtp/user',
     async (action: sendOtpParams, { getState, dispatch }) => {
         const { phone } = action || {};
-
-        console.log('====================================');
-        console.log('response', action);
-        console.log('====================================');
         let result = await ApiInstance.post(SEND_OTP, {
             number: phone,
 
         }).then(response => {
-
-            console.log('====================================');
-            console.log('response', response);
-            console.log('====================================');
             const { data, status } = response;
             return { data, status }
         }).catch((error: AxiosError) => {
@@ -228,6 +265,6 @@ export const loginSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { clearToken, updateSignupForm ,clearForm} = loginSlice.actions
+export const { clearToken, updateSignupForm, clearForm } = loginSlice.actions
 
 export default loginSlice.reducer

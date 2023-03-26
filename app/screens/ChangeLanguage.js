@@ -57,7 +57,7 @@ const ChangeLanguage = () => {
             inputStyles={{
               color: '#FFFFFF',
               fontSize: 20,
-              fontWeight: 800,
+              fontWeight: '800',
               lineHeight: 24,
             }}
             setSelected={setSelected}
@@ -84,7 +84,7 @@ const ChangeLanguage = () => {
           style={{
             textAlign: 'center',
             fontSize: 20,
-            fontWeight: 700,
+            fontWeight: '700',
             lineHeight: 24,
             color: '#008325',
             marginBottom: 75,
@@ -94,7 +94,7 @@ const ChangeLanguage = () => {
         <Text
           style={{
             textAlign: 'center',
-            fontWeight: 400,
+            fontWeight: '400',
             fontSize: 14,
             lineHeight: 17,
             color: '#008325',
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   languageTitle: {
     fontSize: 24,
     fontWeight: 800,
-    color: '#07401',
+    color: '#074010',
     textAlign: 'center',
     lineHeight: 29,
     marginBottom: 24,

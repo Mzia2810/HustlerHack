@@ -54,7 +54,7 @@ const renderItem = ({ item }) => {
   return (
     <View>
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={{ textAlign: 'justify' }}>{item.desc}</Text>
+      <Text style={{ textAlign: 'justify', color: '#000' }}>{item.desc}</Text>
     </View>
   );
 };
@@ -72,9 +72,20 @@ const Privacy = ({ navigation }) => {
     navigation.navigate('ChangeLanguage')
   }
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ width: wp('40%'), alignSelf: 'center', marginTop: 10 }}>
-        <Image source={require('../assets/PLogo.png')} />
+    <View style={{ flex: 1,padding:wp(2) }}>
+      <View style={{
+        width: wp('100%'),
+        justifyContent: 'center',
+        alignItems: 'center',
+        // padding: 10
+      }}>
+        <Image style={{
+          resizeMode: 'contain',
+          height: hp(6),
+          width: wp(30),
+          alignSelf: 'center',
+
+        }} source={require('../assets/PLogo.png')} />
       </View>
 
       <View style={{ width: wp('90%'), height: hp('83%'), alignSelf: 'center' }}>
@@ -101,21 +112,24 @@ const Privacy = ({ navigation }) => {
         transparent
         visible={visible}
         onRequestClose={() => setVisible(false)}>
-        <TouchableOpacity style={{ flex: 1 }} onPress={() => setVisible(false)}>
-          <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', flex: 1 }} />
-        </TouchableOpacity>
-        <View style={styles.modalView}>
+        <TouchableOpacity activeOpacity={1} style={{ 
+           flex: 1, backgroundColor: '#00000040',
+           justifyContent: 'center',
+           alignItems: 'center'
+         }} onPress={() => setVisible(false)}>
+       
+        <TouchableOpacity activeOpacity={1} style={styles.modalView}>
           <Text
             style={{
               fontSize: 15,
               fontWeight: '600',
               lineHeight: 18,
-              color: 'black',
+              color: '#000',
             }}>
             Notice
           </Text>
           <View>
-            <Text style={{ textAlign: 'center', marginTop: 20 }}>
+          <Text style={{ textAlign: 'justify', marginVertical: hp(2), color: "#000", }}>
               In order to evaluate your qualifications and provide you with
               better services, we need your authorization to collect your
               relevant information. Please confirm whether to deny the
@@ -136,7 +150,8 @@ const Privacy = ({ navigation }) => {
               <Text style={[styles.btntext, { color: 'white' }]}>Confirm</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
 
     </View>
@@ -148,14 +163,13 @@ export default Privacy;
 const styles = StyleSheet.create({
   modalView: {
     backgroundColor: '#fff',
-    padding: 20,
-    position: 'absolute',
     justifyContent: 'center',
     alignSelf: 'center',
     alignItems: 'center',
     width: wp('80%'),
-    marginTop: hp('20%'),
     borderRadius: 10,
+    paddingVertical: hp(2),
+    paddingHorizontal: wp(2)
   },
   btn1Modal: {
     borderWidth: 2,
@@ -181,11 +195,12 @@ const styles = StyleSheet.create({
   bntParentModal: {
     width: wp('70%'),
     alignSelf: 'center',
-    marginTop: hp('10%'),
+    // marginTop: hp('10%'),
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   Privacy: {
+    color:"#000",
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 20,
@@ -201,6 +216,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    color:"#000",
     fontWeight: '700',
     lineHeight: 20,
     marginVertical: hp('1%'),
