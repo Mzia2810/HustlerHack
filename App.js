@@ -20,6 +20,7 @@ import Signup from './app/screens/Signup';
 import WelcomeScreen from './app/screens/WelcomeScreen';
 import Premission from './app/screens/Premission';
 import Privacy from './app/screens/Privacy';
+import messaging from '@react-native-firebase/messaging';
 
 
 import { Provider } from 'react-redux'
@@ -33,6 +34,17 @@ const Drawer = createDrawerNavigator();
 
 LogBox.ignoreAllLogs(true)
 const App = () => {
+
+  const getToken = async () => {
+    const token = await messaging().getToken();
+    console.log('====================================');
+    console.log('FB TOKEN : ', token);
+    console.log('====================================');
+  }
+  React.useEffect(() => {
+    getToken()
+
+  }, [])
 
   return (
     <Provider store={store}>
@@ -205,7 +217,7 @@ const FaqScreen = () => {
             `No, we only extend personal loans`
           ]?.map((text, index) => {
             return (
-              <Text key={index} style={{ color: '#000',fontSize:14,fontWeight:'500', textAlign: 'justify' }}>{text}</Text>
+              <Text key={index} style={{ color: '#000', fontSize: 14, fontWeight: '500', textAlign: 'justify' }}>{text}</Text>
             )
           })
         }

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1098722875981",
+    "project_id": "hustlerfundhack",
+    "storage_bucket": "hustlerfundhack.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098722875981:android:42b24c756ab2131d1bda04",
+        "android_client_info": {
+          "package_name": "com.hustlerhack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1098722875981-kbkcnlse3mfivsrrh5niead67rsj3ics.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hustlerhack",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1098722875981-ghq7849jan9o51enq1u0me9sd8vtjg9c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzNSpWXS7L8frLhDVGYIbXIFlwZXQodIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1098722875981-ghq7849jan9o51enq1u0me9sd8vtjg9c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
